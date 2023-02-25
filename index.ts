@@ -1,5 +1,15 @@
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  from,
+  fromEvent,
+  interval,
+  Observable,
+  of,
+  ReplaySubject,
+  Subject,
+} from 'rxjs';
 import { ajax } from 'rxjs/ajax';
+import { map, reduce, scan, take, takeWhile, takeUntil } from 'rxjs/operators';
 
 // const observer = {
 //   next: (value: any) => console.log(value),
@@ -72,7 +82,7 @@ subject.subscribe((res) => console.log(res));
 data.subscribe(subjectC); 
 */
 
-/* Subject vs BehaviourSubject */
+/* Subject vs BehaviourSubject 
 
 const subject = new Subject();
 
@@ -92,3 +102,116 @@ bSubject.subscribe((res) => console.log(`BS one ${res}`));
 bSubject.next(2023);
 bSubject.subscribe((res) => console.log(`BS two ${res}`));
 bSubject.next(2024);
+
+*/
+
+/* Replay Subject 
+
+const $message = new ReplaySubject(2);
+
+$message.next('Martin');
+$message.next('Rocky');
+$message.next('KGF');
+
+$message.subscribe((res) => console.log(`User 1 ${res}`));
+
+$message.next('Red');
+$message.next('Gear');
+
+$message.subscribe((res) => console.log(`User 2 ${res}`));
+*/
+
+/*** Rxjs Operators */
+
+// of(1, 2, 3, 4, 5)
+//   .pipe(map((item) => item * 10))
+//   .subscribe(console.log);
+
+/* Rxjs Map 
+const keyup$ = fromEvent(document, 'keyup');
+const keyCode$ = keyup$.pipe(map((event: any) => event.code));
+keyCode$.subscribe(console.log);
+
+*/
+
+/* Rxjs reduce 
+
+const numbers = [1, 2, 3, 4, 5];
+
+const total = numbers.reduce((acc, cur) => {
+  console.log({ acc, cur });
+  return acc + cur;
+}, 0);
+// console.log(total);
+
+// from(numbers)
+//   .pipe(
+//     reduce((acc, cur) => {
+//       return acc + cur;
+//     }, 0)
+//   )
+//   .subscribe(console.log);
+
+interval(1000)
+  .pipe(
+    reduce((acc, cur) => {
+      return acc + cur;
+    }, 0)
+  )
+  .subscribe({
+    next: console.log,
+    complete: () => console.log('complete'),
+  });
+
+  */
+
+/* scan 
+
+const user = [
+  { name: 'Brain', loggedIn: true, token: null },
+  { name: 'Brain', loggedIn: false, token: '13232' },
+  { name: 'Brain', loggedIn: true, token: '24734jfs' },
+];
+
+const state$ = from(user).pipe(
+  scan((acc, cur) => {
+    return { ...acc, ...cur };
+  }, {})
+);
+
+const name$ = state$.pipe(map((item) => item.name));
+
+name$.subscribe(console.log);
+*/
+
+/* Rxjs take */
+
+// const numbers$ = of(1, 2, 3, 4, 5);
+
+// numbers$.pipe(take(3)).subscribe({
+//   next: console.log,
+//   complete: () => console.log('complete'),
+// });
+
+// const click$ = fromEvent(document, 'click');
+
+// click$.pipe(map(event => ({
+//   x : event.clientX,
+//   y : event.clientY
+// })),take(1)).subscribe({
+//   next : console.log,
+//   complete : () => console.log('complete')
+// })
+
+// click$
+//   .pipe(
+//     map((event) => ({
+//       x: event.clientX,
+//       y: event.clientY,
+//     })),
+//     takeWhile(({ y }) => y <= 200)
+//   )
+//   .subscribe({
+//     next: console.log,
+//     complete: () => console.log('complete'),
+//   });
