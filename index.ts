@@ -9,7 +9,17 @@ import {
   Subject,
 } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
-import { map, reduce, scan, take, takeWhile, takeUntil } from 'rxjs/operators';
+import {
+  map,
+  reduce,
+  scan,
+  take,
+  takeWhile,
+  takeUntil,
+  distinctUntilChanged,
+  debounceTime,
+  pluck,
+} from 'rxjs/operators';
 
 // const observer = {
 //   next: (value: any) => console.log(value),
@@ -215,3 +225,40 @@ name$.subscribe(console.log);
 //     next: console.log,
 //     complete: () => console.log('complete'),
 //   });
+
+/* takeUntil 
+
+const counter$ = interval(1000);
+const click$ = fromEvent(document, 'click');
+
+counter$.pipe(takeUntil(click$)).subscribe({
+  next: console.log,
+  complete: () => console.log('complete'),
+});
+
+*/
+
+/* Rxjs distinctUntilChanged 
+
+const numbers$ = of(1, 2, 2, 3, 3, 3, 4, 4, 5, 6, 6, 7, 8, 8);
+
+numbers$.pipe(distinctUntilChanged()).subscribe({
+  next: console.log,
+  complete: () => console.log('completed'),
+});
+
+*/
+
+/* debouceTime 
+
+const click$ = fromEvent(document, 'click');
+
+const input = document.getElementById('text-input');
+
+const input$ = fromEvent(input, 'keyup');
+
+input$
+  .pipe(debounceTime(1000), pluck('target', 'value'), distinctUntilChanged())
+  .subscribe(console.log);
+
+  */
